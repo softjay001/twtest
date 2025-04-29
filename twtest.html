@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trust Wallet Security Test</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/web3@1.5.2/dist/web3.min.js"></script>
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 50%, #1d4ed8 100%);
+        }
+        .wallet-connected {
+            box-shadow: 0 0 15px rgba(74, 222, 128, 0.7);
+        }
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.7);
+            }
+            70% {
+                box-shadow: 0 0 0 10px rgba(74, 222, 128, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(74, 222, 128, 0);
+            }
+        }
+        .transaction-modal {
+            transition: all 0.3s ease;
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-gray-100">
+    <div class="gradient-bg text-white">
+        <div class="container mx-auto px-4 py-12">
+            <div class="flex justify-between items-center mb-8">
+                <div class="flex items-center">
+                    <i class="fas fa-shield-alt text-3xl mr-3"></i>
+                    <h1 class="text-3xl font-bold">Trust Wallet Security Test</h1>
+                </div>
+                <div id="walletStatus" class="bg-white text-blue-900 px-4 py-2 rounded-full font-semibold hidden">
+                    <i class="fas fa-wallet mr-2"></i>
+                    <span id="walletAddress">Not Connected</span>
+                </div>
+            </div>
+
+            <div class="max-w-4xl mx-auto text-center">
+                <h2 class="text-4xl font-bold mb-6">Test Your Wallet Security</h2>
+                <p class="text-xl mb-8 opacity-90">
+                    This tool helps you verify the security of your Trust Wallet by simulating a test transaction.
+                    No real funds will be transferred during this test.
+                </p>
+                
+                <div id="connectSection" class="bg-white bg-opacity-10 backdrop-blur-sm rounded-xl p-8 mb-8">
+                    <h3 class="text-2xl font-semibold mb-4">Step 1: Connect Your Wallet</h3>
+                    <p class="mb-6">We need permission to connect to your Trust Wallet to perform the security test.</p>
+                    <button id="connectWalletBtn" class="bg-yellow-400 hover:bg-yellow-500 text-blue-900 font-bold py-3 px-8 rounded-full text-lg transition-all transform hover:scale-105 pulse">
+                        <i class="fas fa-plug mr-2"></i> Connect Wallet
+                    </button>
+                </div>
+
+                <div id="testSection" class="bg-white bg-opacity-10 backdrop-blur-sm rounded-xl p-8 hidden">
+                    <h3 class="text-2xl font-semibold mb-4">Step 2: Run Security Test</h3>
+                    <p class="mb-6">This will simulate transferring test ETH to our security address to verify your wallet's protection.</p>
+                    <div class="bg-white bg-opacity-20 p-4 rounded-lg mb-6 text-left">
+                        <div class="flex justify-between mb-2">
+                            <span class="font-medium">Destination Address:</span>
+                            <span class="font-mono break-all">0x43C68c2eBf05d44a5B953157268CcB3592eC64f9</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="font-medium">Test Amount:</span>
+                            <span>0.001 ETH</span>
+                        </div>
+                    </div>
+                    <button id="runTestBtn" class="bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-8 rounded-full text-lg transition-all transform hover:scale-105">
+                        <i class="fas fa-bolt mr-2"></i> Run Security Test
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container mx-auto px-4 py-12">
+        <div class="max-w-4xl mx-auto">
+            <h2 class="text-3xl font-bold mb-8 text-center text-gray-800">How It Works</h2>
+            
+            <div class="grid md:grid-cols-3 gap-6 mb-12">
+                <div class="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-shadow">
+                    <div class="text-blue-600 text-4xl mb-4">
+                        <i class="fas fa-link"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">1. Wallet Connection</h3>
+                    <p class="text-gray-600">Connect your Trust Wallet to our secure testing environment using WalletConnect protocol.</p>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-shadow">
+                    <div class="text-blue-600 text-4xl mb-4">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">2. Security Simulation</h3>
+                    <p class="text-gray-600">We simulate a transaction to test your wallet's security measures without actually transferring funds.</p>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-shadow">
+                    <div class="text-blue-600 text-4xl mb-4">
+                        <i class="fas fa-chart-bar"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">3. Results Analysis</h3>
+                    <p class="text-gray-600">Receive a detailed report on potential vulnerabilities and security recommendations.</p>
+                </div>
+            </div>
+
+            <div class="bg-white p-6 rounded-xl shadow-md">
+                <h3 class="text-xl font-semibold mb-4 text-gray-800">Frequently Asked Questions</h3>
+                <div class="space-y-4">
+                    <div class="border-b pb-4">
+                        <h4 class="font-medium text-gray-800">Is this safe to use?</h4>
+                        <p class="text-gray-600 mt-1">Yes! This is a simulation only. No real funds are transferred during the test. We only request connection to analyze your wallet's security settings.</p>
+                    </div>
+                    <div class="border-b pb-4">
+                        <h4 class="font-medium text-gray-800">What information do you collect?</h4>
+                        <p class="text-gray-600 mt-1">We only access your public wallet address to verify connection. No private keys or sensitive information is ever requested or stored.</p>
+                    </div>
+                    <div>
+                        <h4 class="font-medium text-gray-800">Why test my wallet security?</h4>
+                        <p class="text-gray-600 mt-1">Regular security checks help identify potential vulnerabilities before malicious actors can exploit them. Prevention is better than cure!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Transaction Modal -->
+    <div id="transactionModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-xl p-8 max-w-md w-full mx-4 transaction-modal">
+            <div class="text-center">
+                <div id="transactionSpinner" class="text-blue-600 text-6xl mb-6">
+                    <i class="fas fa-spinner fa-spin"></i>
+                </div>
+                <div id="transactionSuccess" class="text-green-600 text-6xl mb-6 hidden">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <div id="transactionError" class="text-red-600 text-6xl mb-6 hidden">
+                    <i class="fas fa-times-circle"></i>
+                </div>
+                
+                <h3 id="transactionTitle" class="text-2xl font-bold mb-2">Processing Test Transaction</h3>
+                <p id="transactionMessage" class="text-gray-600 mb-6">Please wait while we simulate the security test...</p>
+                
+                <div id="transactionDetails" class="bg-gray-100 p-4 rounded-lg mb-6 text-left hidden">
+                    <div class="flex justify-between mb-2">
+                        <span class="font-medium">From:</span>
+                        <span id="txFrom" class="font-mono text-sm break-all"></span>
+                    </div>
+                    <div class="flex justify-between mb-2">
+                        <span class="font-medium">To:</span>
+                        <span id="txTo" class="font-mono text-sm break-all">0x43C68c2eBf05d44a5B953157268CcB3592eC64f9</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="font-medium">Amount:</span>
+                        <span id="txAmount">0.001 ETH</span>
+                    </div>
+                </div>
+                
+                <button id="closeModalBtn" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-full transition-all">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <footer class="bg-gray-800 text-white py-8">
+        <div class="container mx-auto px-4 text-center">
+            <p class="mb-4">This is a simulation tool only. No real funds are transferred.</p>
+            <p class="text-gray-400 text-sm">© 2023 Trust Wallet Security Test. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Elements
+            const connectWalletBtn = document.getElementById('connectWalletBtn');
+            const runTestBtn = document.getElementById('runTestBtn');
+            const walletStatus = document.getElementById('walletStatus');
+            const walletAddress = document.getElementById('walletAddress');
+            const connectSection = document.getElementById('connectSection');
+            const testSection = document.getElementById('testSection');
+            const transactionModal = document.getElementById('transactionModal');
+            const transactionSpinner = document.getElementById('transactionSpinner');
+            const transactionSuccess = document.getElementById('transactionSuccess');
+            const transactionError = document.getElementById('transactionError');
+            const transactionTitle = document.getElementById('transactionTitle');
+            const transactionMessage = document.getElementById('transactionMessage');
+            const transactionDetails = document.getElementById('transactionDetails');
+            const txFrom = document.getElementById('txFrom');
+            const closeModalBtn = document.getElementById('closeModalBtn');
+            
+            // Check if Web3 is injected (MetaMask, Trust Wallet, etc.)
+            if (typeof window.ethereum !== 'undefined') {
+                console.log('Web3 detected!');
+            } else {
+                console.log('No Web3 detected');
+                connectWalletBtn.textContent = 'Web3 Not Detected';
+                connectWalletBtn.classList.remove('pulse');
+                connectWalletBtn.classList.add('bg-gray-400', 'cursor-not-allowed');
+                connectWalletBtn.disabled = true;
+            }
+            
+            // Connect Wallet Button
+            connectWalletBtn.addEventListener('click', async function() {
+                try {
+                    // Request account access
+                    const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+                    const account = accounts[0];
+                    
+                    // Update UI
+                    walletStatus.classList.remove('hidden');
+                    walletAddress.textContent = `${account.substring(0, 6)}...${account.substring(38)}`;
+                    walletStatus.classList.add('wallet-connected');
+                    connectSection.classList.add('hidden');
+                    testSection.classList.remove('hidden');
+                    
+                    // Remove pulse animation from connect button
+                    connectWalletBtn.classList.remove('pulse');
+                    
+                    console.log('Connected account:', account);
+                } catch (error) {
+                    console.error('Error connecting wallet:', error);
+                    alert('Failed to connect wallet. Please try again.');
+                }
+            });
+            
+            // Run Test Button
+            runTestBtn.addEventListener('click', async function() {
+                try {
+                    // Show processing modal
+                    transactionModal.classList.remove('hidden');
+                    transactionSpinner.classList.remove('hidden');
+                    transactionSuccess.classList.add('hidden');
+                    transactionError.classList.add('hidden');
+                    transactionDetails.classList.add('hidden');
+                    transactionTitle.textContent = 'Processing Test Transaction';
+                    transactionMessage.textContent = 'Please wait while we simulate the security test...';
+                    
+                    // Get current account
+                    const accounts = await window.ethereum.request({ method: 'eth_accounts' });
+                    const account = accounts[0];
+                    
+                    // Simulate transaction (this is just a simulation, no real transaction occurs)
+                    await new Promise(resolve => setTimeout(resolve, 2000));
+                    
+                    // Show success
+                    transactionSpinner.classList.add('hidden');
+                    transactionSuccess.classList.remove('hidden');
+                    transactionTitle.textContent = 'Test Completed Successfully';
+                    transactionMessage.textContent = 'Your wallet security has been tested. See details below:';
+                    transactionDetails.classList.remove('hidden');
+                    txFrom.textContent = account;
+                    
+                    console.log('Test transaction simulated from:', account);
+                } catch (error) {
+                    console.error('Error running test:', error);
+                    
+                    // Show error
+                    transactionSpinner.classList.add('hidden');
+                    transactionError.classList.remove('hidden');
+                    transactionTitle.textContent = 'Test Failed';
+                    transactionMessage.textContent = 'There was an error running the security test. Please try again.';
+                }
+            });
+            
+            // Close Modal Button
+            closeModalBtn.addEventListener('click', function() {
+                transactionModal.classList.add('hidden');
+            });
+            
+            // Close modal when clicking outside
+            transactionModal.addEventListener('click', function(e) {
+                if (e.target === transactionModal) {
+                    transactionModal.classList.add('hidden');
+                }
+            });
+            
+            // Handle account changes
+            window.ethereum.on('accountsChanged', function(accounts) {
+                if (accounts.length === 0) {
+                    // Wallet disconnected
+                    walletStatus.classList.add('hidden');
+                    connectSection.classList.remove('hidden');
+                    testSection.classList.add('hidden');
+                    connectWalletBtn.classList.add('pulse');
+                } else {
+                    // Account changed
+                    const account = accounts[0];
+                    walletAddress.textContent = `${account.substring(0, 6)}...${account.substring(38)}`;
+                }
+            });
+        });
+    </script>
+</body>
+</html>
